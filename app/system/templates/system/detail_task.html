@@ -1,0 +1,9 @@
+<h1>{{ task.name }}</h1>
+
+{% if error_message %}
+    <p><strong>{{ error_message }}</strong></p>
+{% endif %}
+
+{% for question in task.question_set.all %}
+    <li><a href="/system/{{ task.id }}/{{ question.id }}/">{{ question.question_name }}</a></li>
+{% endfor %}

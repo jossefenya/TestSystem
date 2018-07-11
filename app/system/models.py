@@ -1,11 +1,12 @@
 from django.db import models
-from django.urls import reverse
+from django.utils import timezone
 
 # Create your models here.
 
 
 class Task(models.Model):
     task_name = models.CharField(max_length=128, help_text="Enter the name")
+    pub_date = models.DateTimeField('Date', default=None)
 
     def __str__(self):
         return self.task_name

@@ -1,0 +1,6 @@
+<h1>{{ question.question_name }}</h1>
+
+{% for choice in question.choice_set.all %}
+    <input type="submit" value="{{ choice.choice_name }}" formaction="" formmethod="post">
+    <br/>
+{% endfor %}
