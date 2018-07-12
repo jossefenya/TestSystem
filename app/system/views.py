@@ -23,6 +23,27 @@ class DetailTaskView(generic.DetailView):
 
     def get_queryset(self):
         return Task.objects.filter(pub_date__lte=timezone.now())
+
+
+class DetailQuestionView(generic.DetailView):
+    model = Question
+    template_name = 'system/detail_question.html'
+
+
+def vote(request, task_id, question_id):
+    task = get_object_or_404(Task, pk=task_id)
+    question = get_object_or_404(Question, pk=question_id)
+    try:
+        selected_choice = question.choice_set.get(pk=request.POST['choice'])
+    except (KeyError, Choice.DoesNotExist):
+        return render(request, 'system/detail_question.html', {
+            'task': task,
+            'question': question,
+            'error_message': "You didn't select a choice",
+        })
+    else:
+        return HttpResponseRedirect(reverse('index'))
+
 """
 def index(request):
     latest_task_list = Task.objects.order_by('-pub_date')[:10]
@@ -39,15 +60,12 @@ def detail_task(request, task_id):
 """
 
 
-
+"""
 def detail_question(request, task_id, question_id):
     question = get_object_or_404(Question, pk=question_id)
     return render(request, 'system/detail_question.html', {'question': question})
 
 
-def vote(request, question_id):
-    question_count = 0
-    question = get_object_or_404(Question, pk=question_id)
-    max_question = question.objects.all()
-    selected_choice = question.choice_set.get(pk=request.POST['choice'])
-    return HttpResponseRedirect('index.html')
+def vote(request, task_id, question_id):
+    return render(request, 'system/index.html', {})
+"""

@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/html">
+<head>
+    {% block title %}
+        <title>Test system</title>
+    {% endblock %}
+</head>
+<body>
+    {% block side_bar %}
+        <ul><a href="{% url 'index' %}" style="text-decoration: none; font-size: 25px;">Homepage</a></ul>
+        <ul>
+            {% if user.is_authenticated %}
+                <li>User: {{ user.get_username }}</li>
+                <li><a href="{% url 'logout' %}?next={{ request.path }}">Logout</a></li>
+            {% else %}
+                <li><a href="{% url 'login' %}?next={{ request.path }}">Login</a></li>
+            {% endif %}
+        </ul>
+    {% endblock %}
+    {% block content %}
+    {% endblock %}
+</body>
+</html>

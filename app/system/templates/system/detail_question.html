@@ -1,6 +1,18 @@
-<h1>{{ question.question_name }}</h1>
+{% extends "system/base.html" %}
 
-{% for choice in question.choice_set.all %}
-    <input type="submit" value="{{ choice.choice_name }}" formaction="" formmethod="post">
+{% block content %}
+    <h1>{{ task.task_name }}</h1>
     <br/>
-{% endfor %}
+    <h2>{{ question.question_name }}</h2>
+
+
+    <form action="/system/" method="post">
+        {% csrf_token %}
+        {% for choice in question.choice_set.all %}
+            <input type="radio" name="choice" id="choice{{ forloop.counter }}" value="{{ choice.id }}"/>
+            <label for="choice{{ forloop.counter }}">{{ choice.choice_name }}</label><br/>
+        {% endfor %}
+        <br/>
+        <input type="submit" value="Vote">
+    </form>
+{% endblock %}
