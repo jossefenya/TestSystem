@@ -1,15 +1,18 @@
 {% extends "system/base.html" %}
 
 {% block content %}
-
-    {% if latest_task_list %}
-        <ul>
-            {% for task in latest_task_list %}
-                <li><a href="{% url 'detail_task' task.id %}">{{ task.task_name }}</a></li>
-            {% endfor %}
-        </ul>
+    {% if user.is_authenticated %}
+        {% if latest_task_list %}
+            <ul>
+                {% for task in latest_task_list %}
+                    <li><a href="{% url 'detail_task' task.id %}">{{ task.task_name }}</a></li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>No tasks available</p>
+        {% endif %}
     {% else %}
-        <p>No tasks available</p>
+        <p>Login to see more</p>
     {% endif %}
 
 {% endblock %}

@@ -1,18 +1,22 @@
 {% extends "system/base.html" %}
 
 {% block content %}
-    <h1>{{ task.task_name }}</h1>
-    <br/>
-    <h2>{{ question.question_name }}</h2>
-
-
-    <form action="/system/" method="post">
-        {% csrf_token %}
-        {% for choice in question.choice_set.all %}
-            <input type="radio" name="choice" id="choice{{ forloop.counter }}" value="{{ choice.id }}"/>
-            <label for="choice{{ forloop.counter }}">{{ choice.choice_name }}</label><br/>
-        {% endfor %}
+    {% if user.is_authenticated %}
+        <h1>{{ task.task_name }}</h1>
         <br/>
-        <input type="submit" value="Vote">
-    </form>
+        <h2>{{ question.question_name }}</h2>
+
+
+        <form action="/system/" method="post">
+            {% csrf_token %}
+            {% for choice in question.choice_set.all %}
+                <input type="radio" name="choice" id="choice{{ forloop.counter }}" value="{{ choice.id }}"/>
+                <label for="choice{{ forloop.counter }}">{{ choice.choice_name }}</label><br/>
+            {% endfor %}
+            <br/>
+            <input type="submit" value="Vote">
+        </form>
+    {% else %}
+        <p>Login to see more</p>
+    {% endif %}
 {% endblock %}
