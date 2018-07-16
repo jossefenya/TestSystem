@@ -1,9 +1,12 @@
-from django.shortcuts import render, HttpResponse, Http404, get_object_or_404
+from django.shortcuts import render, HttpResponse, Http404, get_object_or_404, render_to_response
 from django.urls import reverse
 from django.views import generic
 from django.utils import timezone
 from django.http import HttpResponseRedirect
 from .models import Task, Question, Choice
+from .forms import MyForm
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib import auth
 # Create your views here.
 
 
@@ -30,42 +33,28 @@ class DetailQuestionView(generic.DetailView):
     template_name = 'system/detail_question.html'
 
 
-def vote(request, task_id, question_id):
-    task = get_object_or_404(Task, pk=task_id)
-    question = get_object_or_404(Question, pk=question_id)
-    try:
-        selected_choice = question.choice_set.get(pk=request.POST['choice'])
-    except (KeyError, Choice.DoesNotExist):
-        return render(request, 'system/detail_question.html', {
-            'task': task,
-            'question': question,
-            'error_message': "You didn't select a choice",
-        })
-    else:
-        return HttpResponseRedirect(reverse('index'))
+def check_solution(request):
+    form = MyForm(request.POST)
+    if request.method == "POST":
+        if form.is_valid():
+            choice = request.POST["choice"]
 
-"""
-def index(request):
-    latest_task_list = Task.objects.order_by('-pub_date')[:10]
-    context = {'latest_task_list': latest_task_list}
-    return render(request, 'system/index.html', context)
+    return render(request, 'system/detail_question.html', {'form': form})
 
 
-def detail_task(request, task_id):
-    try:
-        task = Task.objects.get(pk=task_id)
-    except Task.DoesNotExist:
-        raise Http404("Task doesn't exist")
-    return render(request, 'system/detail_task.html', {'task': task})
-"""
-
-
-"""
-def detail_question(request, task_id, question_id):
-    question = get_object_or_404(Question, pk=question_id)
-    return render(request, 'system/detail_question.html', {'question': question})
-
-
-def vote(request, task_id, question_id):
-    return render(request, 'system/index.html', {})
-"""
+def register(request):
+    context = {}
+    register_form = UserCreationForm()
+    context = {'register_form': register_form}
+    if request.method == "post" or request.method == "POST":
+        new_user_form = UserCreationForm(request.POST)
+        if new_user_form.is_valid():
+            new_user_form.save()
+            new_user = auth.authenticate(username=new_user_form.cleaned_data['username'],
+                                         password=new_user_form.cleaned_data['password2'])
+            auth.login(request, new_user)
+            return HttpResponseRedirect('/system/')
+        else:
+            register_form = new_user_form
+            context = {'register_form': register_form}
+    return render(request, 'system/register.html', context)

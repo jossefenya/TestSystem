@@ -1,6 +1,7 @@
 from django.contrib import admin
 
-from .models import Task, Question, Choice
+from .models import Task, Question, Choice, User
+
 
 class QuestionInLine(admin.TabularInline):
     model = Question
@@ -13,6 +14,10 @@ class ChoiceInLine(admin.TabularInline):
 
 
 class TaskAdmin(admin.ModelAdmin):
-    inlines = [QuestionInLine, ChoiceInLine]
+    list_display = ('task_name', 'user',)
+
+
+    inlines = [QuestionInLine, ChoiceInLine, ]
 
 admin.site.register(Task, TaskAdmin)
+
