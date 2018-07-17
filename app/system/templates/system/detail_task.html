@@ -7,9 +7,20 @@
         {% if error_message %}
             <p><strong>{{ error_message }}</strong></p>
         {% endif %}
-
-        
-
+        <form action="/system/results/" method="POST">
+            {% csrf_token %}
+            {% for question in task.question_set.all %}
+                <p style="font-size: 15px; text-decoration: none;"><strong>{{ question.question_name }}</strong></p>
+                {% for choice in question.choice_set.all %}
+                    <input type="checkbox" name="choice[]" id="{{ choice.id }}" value="{{ choice.is_true }}"/>
+                    <label>{{ choice.choice_name }}</label>
+                    <br/>
+                {% endfor %}
+            {% endfor %}
+            <br/>
+            <input type="submit" value="Send"/>
+        </form>
+        <br/>
     {% else %}
         <p>Login to see more</p>
     {% endif %}

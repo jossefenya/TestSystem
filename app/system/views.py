@@ -4,7 +4,6 @@ from django.views import generic
 from django.utils import timezone
 from django.http import HttpResponseRedirect
 from .models import Task, Question, Choice
-from .forms import MyForm
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib import auth
 # Create your views here.
@@ -34,13 +33,15 @@ class DetailQuestionView(generic.DetailView):
 
 
 def check_solution(request):
-    form = MyForm(request.POST)
-    if request.method == "POST":
-        if form.is_valid():
-            choice = request.POST["choice"]
-
-    return render(request, 'system/detail_question.html', {'form': form})
-
+    context = {}
+    cnt_of_true = 0
+    if request.method == 'POST':
+        choices = request.POST.getlist('choice[]')
+        for choice in choices:
+            if choice == 'True':
+                cnt_of_true += 1
+        context = {'cnt_of_true': cnt_of_true}
+        return render(request, 'system/results.html', context)
 
 def register(request):
     context = {}
@@ -58,3 +59,4 @@ def register(request):
             register_form = new_user_form
             context = {'register_form': register_form}
     return render(request, 'system/register.html', context)
+
